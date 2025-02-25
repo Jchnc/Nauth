@@ -1,14 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { User } from '../interfaces/user.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-
-export interface User {
-  userId: number;
-  username: string;
-  password: string;
-}
 
 @Injectable()
 export class UsersService {
@@ -60,6 +55,29 @@ export class UsersService {
     return {
       userId: Number(user.id),
       username: user.username,
+    };
+  }
+
+  /**
+   *  Find a user by ID
+   * @param userId  The ID of the user to find
+   * @returns The user with the given ID or null if not found
+   */
+  async findById(userId: number): Promise<User | null> {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      userId: Number(user.id),
+      username: user.username,
+      password: user.password_hash,
     };
   }
 }
