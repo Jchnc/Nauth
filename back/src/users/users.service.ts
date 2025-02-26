@@ -4,6 +4,7 @@ import { User } from '../interfaces/user.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { CreateUserResponseDto } from './dto/create-user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,7 +28,7 @@ export class UsersService {
 
     return {
       userId: Number(user.id),
-      username: user.username,
+      ...user,
     };
   }
 
@@ -36,11 +37,14 @@ export class UsersService {
    * @param createUserDto The user to create
    * @returns The created user
    */
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async create(createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
     const hashedPassword: string = await bcrypt.hash(
       createUserDto.password,
       10,
     );
+
+    // TODO: Add validation for already existing username
+    // TODO: Add validation for already existing email
 
     const user = await this.prisma.users.create({
       data: {
@@ -54,7 +58,7 @@ export class UsersService {
 
     return {
       userId: Number(user.id),
-      username: user.username,
+      ...user,
     };
   }
 

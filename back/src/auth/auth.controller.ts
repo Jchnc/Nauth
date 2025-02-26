@@ -8,6 +8,7 @@ import {
   Logger,
   Post,
   Request,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -18,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { Request as ExpressRequest } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
@@ -41,6 +42,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
+  //#region Swagger
   @ApiOperation({ summary: 'User login' })
   @ApiBody({ type: () => LoginDto, required: true })
   @ApiResponse({
@@ -52,12 +54,23 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
-  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
+  //#endregion
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res() res: Response,
+  ): Promise<Response> {
     try {
-      return await this.authService.signIn(
+      const access_token = await this.authService.signIn(
         loginDto.username,
         loginDto.password,
       );
+      res.cookie('access_token', access_token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 3600 * 24 * 7, // 7 days
+      });
+      return res.status(HttpStatus.OK).json({ access_token });
     } catch (error: unknown) {
       this.logger.error(error);
       throw new UnauthorizedException('Invalid credentials');
@@ -65,6 +78,7 @@ export class AuthController {
   }
 
   @Get('me')
+  //#region Swagger
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({
@@ -76,12 +90,13 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized',
   })
+  //#endregion
   async getProfile(
     @Request() req: AuthenticatedRequest,
   ): Promise<UserProfileDto> {
     try {
       if (!req.user?.sub || typeof req.user.sub !== 'number') {
-        this.logger.warn('Invalid user ID in token');
+        this.logger.warn(`Invalid user ID in token: ${req.user?.sub}`);
         throw new UnauthorizedException('Invalid user ID in token');
       }
       const userId: number = req.user.sub;
@@ -107,12 +122,14 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
+  //#region Swagger
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'New access token',
     type: AuthResponseDto,
   })
+  //#endregion
   async refreshToken(@Request() req: ExpressRequest): Promise<AuthResponseDto> {
     const refreshToken = this.extractRefreshToken(req);
     return await this.authService.refreshToken(refreshToken);

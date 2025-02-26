@@ -1,11 +1,13 @@
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
-  app.useGlobalGuards();
+  const configService = app.get(ConfigService);
 
   // Swagger config
   const config = new DocumentBuilder()
@@ -18,6 +20,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  await app.listen(process.env.PORT ?? 3001);
+  const port = configService.get<number>('config.port') ?? 3001;
+  logger.log(`Application starting on port ${port}`);
+
+  await app.listen(port);
 }
 void bootstrap();

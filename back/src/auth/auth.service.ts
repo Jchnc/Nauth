@@ -5,10 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcrypt';
+import { UserResponseDto } from 'src/users/dto/user-response.dto';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from './entities/user.entity';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { User } from '../interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -18,22 +19,22 @@ export class AuthService {
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
-  async signIn(
-    username: string,
-    pass: string,
-  ): Promise<{ access_token: string }> {
+  async signIn(username: string, pass: string): Promise<string> {
     const user = (await this.usersService.findOne(username)) as
-      | User
+      | UserResponseDto
       | undefined;
 
-    if (!user || user.password !== pass) {
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const isValid = await compare(pass, user.password_hash);
+    if (!isValid) {
       throw new UnauthorizedException();
     }
 
     const payload = { sub: user.userId, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return await this.jwtService.signAsync(payload);
   }
 
   async getUserProfile(userId: number): Promise<UserEntity> {

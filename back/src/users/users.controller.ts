@@ -1,17 +1,18 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiParam,
-  ApiCreatedResponse,
-  ApiOkResponse,
   ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
-import { UsersService } from './users.service';
+import { CreateUserResponseDto } from './dto/create-user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UsersService } from './users.service';
 
 @ApiTags('Users')
 @Controller('users')
@@ -19,6 +20,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  //#region Swagger
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({
@@ -28,11 +30,15 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: 'Invalid input data',
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  //#endregion
+  async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<CreateUserResponseDto> {
     return await this.usersService.create(createUserDto);
   }
 
   @Get(':username')
+  //#region Swagger
   @ApiOperation({ summary: 'Get user by username' })
   @ApiParam({
     name: 'username',
@@ -47,6 +53,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     description: 'User not found',
   })
+  //#endregion
   async findOne(
     @Param('username') username: string,
   ): Promise<UserResponseDto | null> {

@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserResponseDto {
+export class CreateUserResponseDto {
   @ApiProperty({ example: 1, description: 'The user ID' })
   @IsNumber()
   userId: number;
@@ -22,10 +22,6 @@ export class UserResponseDto {
   })
   @IsEmail()
   email: string;
-
-  @ApiProperty({ example: 'strongpassword123', description: 'The password' })
-  @IsString()
-  password_hash: string;
 
   @ApiProperty({
     example: 'John',
