@@ -1,11 +1,10 @@
 "use client";
 
-import { MenuItem } from "@/app/components/MenuItem";
-import { MenuItemsContainer } from "@/app/components/MenuItemsContainer";
-import UserMenuDropdown from "@/app/components/UserMenuDropdown";
 import { cn } from "@/app/lib/utils";
-import { LayoutDashboard, Menu, Settings, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState } from "react";
+import UserMenuItem from "@/app/components/UserMenuItem";
+import Sidebar from "@/app/components/Sidebar";
 
 const DashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,69 +19,49 @@ const DashboardPage = () => {
   return (
     <div
       className={cn(
-        "grid grid-cols-[255px_1fr] min-h-screen bg-dark-0 transition-all",
+        "grid grid-cols-[255px_1fr] min-h-screen transition-all",
         !isSidebarOpen && "grid-cols-[60px_1fr]"
       )}
     >
       {/* Sidebar */}
-      <aside className="bg-dark-0 border-r border-dark-2">
-        <div className="gap-2 grid grid-cols-[40px_1fr] items-center p-2 min-h-16 border-b border-dark-2">
+      <aside className="bg-background-lighter border-r border-border">
+        <div className="gap-2 grid grid-cols-[40px_1fr] items-center p-2 min-h-16 border-b border-border">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white hover:text-white hover:bg-dark-2-hover p-2 rounded-lg"
+            className="text-foreground-muted hover:text-foreground hover:bg-background p-2 rounded-lg"
           >
             <Menu size={24} color="white" />
           </button>
           <h1
             className={cn(
-              "text-xl font-bold text-text-dark-1",
+              "text-xl font-bold text-foreground",
               !isSidebarOpen && "hidden"
             )}
           >
-            Nauth
+            <span className="text-accent-blue">N</span>auth
           </h1>
         </div>
-        <MenuItemsContainer>
-          <MenuItem
-            icon={<LayoutDashboard size={20} color="white" />}
-            label="Dashboard"
-            href="/dashboard"
-            isSidebarHidden={!isSidebarOpen}
-          />
-          <MenuItem
-            icon={<User size={20} color="white" />}
-            label="Profile"
-            href="/profile"
-            isSidebarHidden={!isSidebarOpen}
-          />
-          <MenuItem
-            icon={<Settings size={20} color="white" />}
-            label="Settings"
-            href="/settings"
-            isSidebarHidden={!isSidebarOpen}
-          />
-        </MenuItemsContainer>
+        {/* User Avatar */}
+        <UserMenuItem
+          label={user.name}
+          isSidebarHidden={!isSidebarOpen}
+          onClick={() => console.log("Profile")}
+        />
+        <hr  className="border-border border-t-1 w-full" />
+        <Sidebar isSidebarOpen={isSidebarOpen} />
       </aside>
       <div>
         {/* Top Bar */}
-        <header className="border-b border-dark-2 px-10 min-h-16 max-h-16 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-text-dark-1">Dashboard</h2>
-          {/* User Avatar */}
-          <div className="flex items-center gap-4">
-            <UserMenuDropdown
-              userName={user.name}
-              onLogOut={() => console.log("Log Out")}
-              onChangeTheme={() => console.log("Change Theme")}
-            />
-          </div>
+        <header className="border-b border-border px-10 min-h-16 max-h-16 flex items-center justify-between bg-background-lighter">
+          <h2 className="text-xl font-bold text-foreground">Dashboard</h2>
         </header>
         {/* Page Content */}
         <main className="p-4 max-w-6xl">
-          <div className="bg-dark-3 border border-dark-2 p-6 rounded-lg shadow-sm">
-            <h2 className="text-2xl font-bold text-text-dark-1 mb-4">
+          <div className="bg-background-lighter border border-border p-6 rounded-lg shadow-card">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
               Overview
             </h2>
-            <p className="text-text-dark-0">
+            <p className="text-foreground-muted">
               This is your dashboard. You can manage your profile, settings, and
               more from here.
             </p>

@@ -20,8 +20,8 @@ export function MenuItem({
       <a
         href={href}
         className={cn(
-          "flex items-center gap-4 rounded-lg p-2 transition-all hover:bg-dark-2-hover",
-          "text-text-dark-0 hover:text-text-dark-1",
+          "flex items-center gap-4 rounded-lg p-2 transition-all hover:bg-background",
+          "text-foreground-muted hover:text-foreground", 
           isSidebarHidden && "justify-center"
         )}
       >

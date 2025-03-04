@@ -26,12 +26,12 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
+    <div className="min-h-screen flex items-center justify-center text-foreground">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md"
+        className="bg-background-lighter border border-border p-8 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+        <h2 className="text-2xl text-foreground font-bold mb-6 text-center">Register</h2>
 
         {/* Username Field */}
         <div className="mb-4">
@@ -53,7 +53,7 @@ const RegisterForm: React.FC = () => {
                 message: "Username must be at least 3 characters",
               },
             })}
-            className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
             placeholder="JohnDoe"
           />
         </div>
@@ -74,7 +74,7 @@ const RegisterForm: React.FC = () => {
             {...register("firstName", {
               required: "First name is required",
             })}
-            className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
             placeholder="John"
           />
         </div>
@@ -95,7 +95,7 @@ const RegisterForm: React.FC = () => {
             {...register("lastName", {
               required: "Last name is required",
             })}
-            className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
             placeholder="Doe"
           />
         </div>
@@ -120,7 +120,7 @@ const RegisterForm: React.FC = () => {
                 message: "Please enter a valid email address",
               },
             })}
-            className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
             placeholder="johndoe@email.com"
           />
         </div>
@@ -146,7 +146,7 @@ const RegisterForm: React.FC = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-              className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
               placeholder="•••••••••"
             />
             <button
@@ -155,9 +155,9 @@ const RegisterForm: React.FC = () => {
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
             >
               {showPassword ? (
-                <EyeOff className="text-gray-400" />
+                <EyeOff className="text-gray-400 hover:text-accent-blue" />
               ) : (
-                <Eye className="text-gray-400" />
+                <Eye className="text-gray-400 hover:text-accent-blue" />
               )}
             </button>
           </div>
@@ -166,7 +166,7 @@ const RegisterForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-accent-blue"
         >
           Register
         </button>

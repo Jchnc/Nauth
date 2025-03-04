@@ -23,10 +23,10 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
+    <div className="min-h-screen flex items-center justify-center bg-dark-0 text-white">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md"
+        className="bg-dark-3 p-8 border bg-background-lighter border-border  rounded-lg shadow-lg w-full max-w-md"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
                 message: "Username must be at least 3 characters",
               },
             })}
-            className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
             placeholder="JohnDoe"
           />
         </div>
@@ -76,7 +76,7 @@ const LoginForm: React.FC = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-              className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-transparent border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue"
               placeholder="•••••••••"
             />
             <button
@@ -85,9 +85,9 @@ const LoginForm: React.FC = () => {
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
             >
               {showPassword ? (
-                <EyeOff className="text-gray-400" />
+                <EyeOff className="text-foreground-muted hover:text-accent-blue" />
               ) : (
-                <Eye className="text-gray-400" />
+                <Eye className="text-foreground-muted hover:text-accent-blue" />
               )}
             </button>
           </div>
@@ -96,7 +96,7 @@ const LoginForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-accent-blue-muted focus:outline-none focus:ring-2 focus:ring-accent-blue"
         >
           Login
         </button>

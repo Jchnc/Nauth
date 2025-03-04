@@ -5,12 +5,14 @@ interface TooltipProps {
   children: React.ReactNode;
   text: string;
   direction?: "top" | "bottom" | "left" | "right";
+  extraClasses?: string;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
   children,
   text,
   direction = "top",
+  extraClasses,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -30,7 +32,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <div
-      className="relative inline-block"
+      className={cn("relative inline-block", extraClasses)}
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
     >
@@ -38,14 +40,14 @@ const Tooltip: React.FC<TooltipProps> = ({
       {isVisible && (
         <div
           className={cn(
-            "absolute z-50 px-3 py-2 text-sm text-text-dark-0 bg-dark-2 rounded-lg shadow-md",
+            "absolute z-50 px-3 py-2 text-sm text-foreground bg-background-lighter rounded-lg shadow-card border border-border",
             tooltipDirectionClasses[direction]
           )}
         >
           {text}
           <div
             className={cn(
-              "absolute w-2 h-2 bg-dark-2",
+              "absolute w-2 h-2 bg-background-lighter border border-border",
               arrowDirectionClasses[direction]
             )}
           />
