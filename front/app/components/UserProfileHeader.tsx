@@ -1,17 +1,17 @@
 import { cn } from "@/app/lib/utils";
 import { ChevronsUpDown, User } from "lucide-react";
 
-interface UserMenuItemProps {
+interface UserProfileHeaderProps {
   label: string;
   isSidebarHidden?: boolean;
   onClick: () => void;
 }
 
-export function UserMenuItem({
+export function UserProfileHeader({
   label,
   onClick,
   isSidebarHidden,
-}: UserMenuItemProps) {
+}: UserProfileHeaderProps) {
   return (
     <button
       onClick={onClick}
@@ -42,4 +42,4 @@ export function UserMenuItem({
   );
 }
 
-export default UserMenuItem;
+export default UserProfileHeader;

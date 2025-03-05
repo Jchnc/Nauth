@@ -5,8 +5,6 @@ import {
   DollarSign,
   FileText,
   LayoutDashboard,
-  Settings,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,16 +18,6 @@ const menuData: MenuData = {
       label: "Dashboard",
       href: "/dashboard",
       icon: LayoutDashboard,
-    },
-    Profile: {
-      label: "Profile",
-      href: "/profile",
-      icon: User,
-    },
-    Settings: {
-      label: "Settings",
-      href: "/settings",
-      icon: Settings,
     },
   },
   Finance: {
@@ -51,7 +39,9 @@ const menuData: MenuData = {
   },
 };
 
-const Menu: React.FC<{ isSidebarOpen: boolean }> = ({ isSidebarOpen }) => {
+const SideBarMenu: React.FC<{ isSidebarOpen: boolean }> = ({
+  isSidebarOpen,
+}) => {
   const pathname = usePathname();
 
   return (
@@ -110,4 +100,4 @@ const Menu: React.FC<{ isSidebarOpen: boolean }> = ({ isSidebarOpen }) => {
   );
 };
 
-export default Menu;
+export default SideBarMenu;

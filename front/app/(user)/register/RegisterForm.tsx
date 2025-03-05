@@ -1,7 +1,9 @@
 "use client";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Delete } from "lucide-react";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { cn } from "@/app/lib/utils";
+import Tooltip from "@/app/components/Tooltip";
 
 type RegisterFormData = {
   username: string;
@@ -15,8 +17,17 @@ const RegisterForm: React.FC = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<RegisterFormData>();
+  } = useForm<RegisterFormData>({
+    defaultValues: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
+  });
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,7 +42,9 @@ const RegisterForm: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-background-lighter border border-border p-8 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h2 className="text-2xl text-foreground font-bold mb-6 text-center">Register</h2>
+        <h2 className="text-2xl text-foreground font-bold mb-6 text-center">
+          Register
+        </h2>
 
         {/* Username Field */}
         <div className="mb-4">
@@ -164,12 +177,32 @@ const RegisterForm: React.FC = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-accent-blue"
-        >
-          Register
-        </button>
+        <div className="grid grid-cols-[50px_1fr] gap-4">
+          {/* Clear Form Button */}
+          <Tooltip text="Clear Form" direction="left">
+            <button
+              type="button"
+              onClick={() => reset()}
+              className={cn(
+                "w-full bg-background-lighter text-foreground py-2 px-4 rounded-md hover:bg-background focus:outline-none focus:ring-2 focus:ring-accent-blue",
+                "flex items-center gap-2 justify-center",
+                "min-h-[40px]"
+              )}
+            >
+              <Delete size={20} />
+            </button>
+          </Tooltip>
+          <button
+            type="submit"
+            className={cn(
+              "w-full bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-accent-blue-muted focus:outline-none focus:ring-2 focus:ring-accent-blue",
+              "flex items-center gap-2 justify-center"
+            )}
+          >
+            <UserPlus size={20} />
+            Register
+          </button>
+        </div>
       </form>
     </div>
   );

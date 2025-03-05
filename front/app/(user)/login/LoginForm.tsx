@@ -1,7 +1,8 @@
 "use client";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { cn } from "@/app/lib/utils";
 
 type LoginFormData = {
   username: string;
@@ -96,8 +97,12 @@ const LoginForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-accent-blue-muted focus:outline-none focus:ring-2 focus:ring-accent-blue"
+          className={cn(
+            "w-full bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-accent-blue-muted focus:outline-none focus:ring-2 focus:ring-accent-blue",
+            "flex items-center gap-2 justify-center"
+          )}
         >
+          <LogIn size={20} />
           Login
         </button>
       </form>
