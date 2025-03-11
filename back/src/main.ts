@@ -9,6 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  app.enableCors({
+    origin: configService.get<string>('config.frontendUrl'),
+    credentials: true,
+  });
+
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Nauth API')
@@ -22,6 +27,9 @@ async function bootstrap() {
 
   const port = configService.get<number>('config.port') ?? 3001;
   logger.log(`Application starting on port ${port}`);
+  logger.log(
+    `Frontend URL: ${configService.get<string>('config.frontendUrl')}`,
+  );
 
   await app.listen(port);
 }

@@ -18,7 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response } from 'express';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { AuthService } from './auth.service';
@@ -27,6 +27,7 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { VerifyTokenResponseDto } from './dto/verify-token-response.dto';
+import { ConfigService } from '@nestjs/config';
 
 interface AuthenticatedRequest extends ExpressRequest {
   user: JwtPayload;
@@ -35,7 +36,10 @@ interface AuthenticatedRequest extends ExpressRequest {
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   private readonly logger = new Logger(AuthController.name);
 
@@ -67,7 +71,7 @@ export class AuthController {
       );
       res.cookie('access_token', access_token, {
         httpOnly: true,
-        secure: true,
+        secure: this.configService.get<boolean>('config.secure'),
         sameSite: 'strict',
         maxAge: 3600 * 24 * 7, // 7 days
       });
@@ -146,6 +150,7 @@ export class AuthController {
 
   @Public()
   @Post('validate')
+  @SkipThrottle()
   //#region Swagger
   @ApiOperation({ summary: 'Validate access token' })
   @ApiResponse({
@@ -166,5 +171,29 @@ export class AuthController {
       throw new UnauthorizedException('Invalid access token');
     }
     return token;
+  }
+
+  @Public()
+  @Post('logout')
+  @SkipThrottle()
+  //#region Swagger
+  @ApiOperation({ summary: 'Logout' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Logout successful',
+  })
+  //#endregion
+  logout(@Res() res: Response) {
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: this.configService.get<boolean>('config.secure'),
+      sameSite: 'strict',
+    });
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: this.configService.get<boolean>('config.secure'),
+      sameSite: 'strict',
+    });
+    return res.status(HttpStatus.OK).json({ message: 'Logout successful' });
   }
 }

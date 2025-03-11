@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
+  console.log("Access token:", accessToken);
 
   const publicPaths = ["/login", "/register", "/"];
 
@@ -16,7 +17,7 @@ export async function middleware(request: NextRequest) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/validate-token`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/validate`,
       {
         method: "POST",
         headers: {

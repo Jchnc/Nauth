@@ -1,8 +1,9 @@
 "use client";
+import { cn } from "@/app/lib/utils";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { cn } from "@/app/lib/utils";
 
 type LoginFormData = {
   username: string;
@@ -10,17 +11,44 @@ type LoginFormData = {
 };
 
 const LoginForm: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>();
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const router = useRouter();
+  const { register, handleSubmit } = useForm<LoginFormData>();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit: SubmitHandler<LoginFormData> = (data) => {
-    console.log("Login Data:", data);
-    // TODO: Add login logic here
+  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.status === 429) {
+        setLoginError("Too many attempts. Please, try again later.");
+        return;
+      }
+
+      if (!response.ok) {
+        setLoginError("Wrong username or password.");
+        return;
+      }
+
+      if (response.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      setLoginError("Please, verify.");
+      console.error("Error logging in:", error);
+      return;
+    }
   };
 
   return (
@@ -35,11 +63,6 @@ const LoginForm: React.FC = () => {
         <div className="mb-4">
           <label htmlFor="username" className="block text-sm font-medium mb-2">
             Username
-            {errors.username && (
-              <span className="text-red-500 text-xs float-end">
-                {errors.username.message}
-              </span>
-            )}
           </label>
           <input
             id="username"
@@ -60,11 +83,6 @@ const LoginForm: React.FC = () => {
         <div className="mb-6">
           <label htmlFor="password" className="block text-sm font-medium mb-2">
             Password
-            {errors.password && (
-              <span className="text-red-500 text-xs float-end">
-                {errors.password.message}
-              </span>
-            )}
           </label>
           <div className="relative">
             <input
@@ -93,6 +111,11 @@ const LoginForm: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Error Message */}
+        {loginError && (
+          <div className="mb-6 text-red-500 text-xs">{loginError}</div>
+        )}
 
         {/* Submit Button */}
         <button

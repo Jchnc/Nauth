@@ -1,6 +1,7 @@
 import { cn } from "@/app/lib/utils";
 import { LogOut, Settings } from "lucide-react";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 interface UserProfileBodyProps {
   isUserBodyOpen: boolean;
@@ -9,6 +10,30 @@ interface UserProfileBodyProps {
 const UserProfileBody: React.FC<UserProfileBodyProps> = ({
   isUserBodyOpen,
 }) => {
+  const router = useRouter();
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -33,6 +58,7 @@ const UserProfileBody: React.FC<UserProfileBodyProps> = ({
           </li>
           <li>
             <button
+              onClick={handleLogout}
               className={cn(
                 "text-red-500 flex items-center gap-2 rounded-lg p-2 transition-all hover:bg-background w-full",
                 "hover:text-foreground"

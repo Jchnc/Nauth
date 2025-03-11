@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
@@ -17,6 +18,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
@@ -36,7 +38,7 @@ export class AuthService {
 
     const payload = { sub: user.userId, username: user.username };
     return await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_KEY,
+      secret: this.configService.get<string>('config.jwt_secret'),
     });
   }
 
@@ -65,7 +67,7 @@ export class AuthService {
     const payload: JwtPayload = await this.jwtService.verifyAsync<JwtPayload>(
       refreshToken,
       {
-        secret: process.env.JWT_SECRET_KEY,
+        secret: this.configService.get<string>('config.jwt_secret'),
       },
     );
     const user = await this.usersService.findById(payload.sub);
@@ -82,7 +84,7 @@ export class AuthService {
           username: user.username,
         },
         {
-          secret: process.env.JWT_SECRET_KEY,
+          secret: this.configService.get<string>('config.jwt_secret'),
         },
       ),
       refresh_token: refreshToken,
@@ -97,7 +99,7 @@ export class AuthService {
   async validateToken(token: string): Promise<VerifyTokenResponseDto> {
     try {
       const decoded = await this.jwtService.verifyAsync<JwtPayload>(token, {
-        secret: process.env.JWT_SECRET_KEY,
+        secret: this.configService.get<string>('config.jwt_secret'),
       });
       return {
         valid: true,
