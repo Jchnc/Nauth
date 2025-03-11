@@ -26,6 +26,7 @@ import { Public } from './decorators/public.decorator';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserProfileDto } from './dto/user-profile.dto';
+import { VerifyTokenResponseDto } from './dto/verify-token-response.dto';
 
 interface AuthenticatedRequest extends ExpressRequest {
   user: JwtPayload;
@@ -139,6 +140,30 @@ export class AuthController {
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer' || !token) {
       throw new UnauthorizedException('Invalid refresh token');
+    }
+    return token;
+  }
+
+  @Public()
+  @Post('validate')
+  //#region Swagger
+  @ApiOperation({ summary: 'Validate access token' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Token validation result',
+  })
+  //#endregion
+  async validateToken(
+    @Request() req: ExpressRequest,
+  ): Promise<VerifyTokenResponseDto> {
+    const token = this.extractAccessToken(req);
+    return await this.authService.validateToken(token);
+  }
+
+  private extractAccessToken(req: ExpressRequest): string {
+    const [type, token] = req.headers.authorization?.split(' ') ?? [];
+    if (type !== 'Bearer' || !token) {
+      throw new UnauthorizedException('Invalid access token');
     }
     return token;
   }

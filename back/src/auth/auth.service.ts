@@ -9,6 +9,7 @@ import { compare } from 'bcrypt';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UsersService } from '../users/users.service';
+import { VerifyTokenResponseDto } from './dto/verify-token-response.dto';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -34,7 +35,9 @@ export class AuthService {
     }
 
     const payload = { sub: user.userId, username: user.username };
-    return await this.jwtService.signAsync(payload);
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_KEY,
+    });
   }
 
   async getUserProfile(userId: number): Promise<UserEntity> {
@@ -59,8 +62,12 @@ export class AuthService {
     expires_in?: number;
     token_type?: string;
   }> {
-    const payload: JwtPayload =
-      await this.jwtService.verifyAsync<JwtPayload>(refreshToken);
+    const payload: JwtPayload = await this.jwtService.verifyAsync<JwtPayload>(
+      refreshToken,
+      {
+        secret: process.env.JWT_SECRET_KEY,
+      },
+    );
     const user = await this.usersService.findById(payload.sub);
 
     if (!user) {
@@ -69,11 +76,40 @@ export class AuthService {
     }
 
     return {
-      access_token: await this.jwtService.signAsync({
-        sub: user.userId,
-        username: user.username,
-      }),
+      access_token: await this.jwtService.signAsync(
+        {
+          sub: user.userId,
+          username: user.username,
+        },
+        {
+          secret: process.env.JWT_SECRET_KEY,
+        },
+      ),
       refresh_token: refreshToken,
     };
+  }
+
+  /**
+   * Validate a JWT token
+   * @param token The JWT token to validate
+   * @returns The decoded payload of the token and a message
+   */
+  async validateToken(token: string): Promise<VerifyTokenResponseDto> {
+    try {
+      const decoded = await this.jwtService.verifyAsync<JwtPayload>(token, {
+        secret: process.env.JWT_SECRET_KEY,
+      });
+      return {
+        valid: true,
+        message: 'Token is valid',
+        payload: decoded,
+      };
+    } catch (error: unknown) {
+      throw new UnauthorizedException({
+        valid: false,
+        message: 'Invalid token',
+        error: error,
+      });
+    }
   }
 }

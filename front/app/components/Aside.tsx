@@ -21,7 +21,7 @@ const Aside: React.FC<AsideProps> = ({
   const [isUserBodyOpen, setIsUserBodyOpen] = useState(false);
 
   return (
-    <aside className="bg-background-lighter border-r border-border">
+    <aside className="bg-background-lighter border-r border-border relative">
       <div className="gap-2 grid grid-cols-[40px_1fr] items-center p-2 min-h-16 border-b border-border">
         <button
           onClick={handleSidebarToggle}
@@ -49,6 +49,7 @@ const Aside: React.FC<AsideProps> = ({
       <hr className="border-border border-t-1 w-full" />
 
       <SideBarMenu isSidebarOpen={isSidebarOpen} />
+  
     </aside>
   );
 };
